@@ -31,19 +31,9 @@ class CPU:
 
 
 
-    # #_Memory Address Register_ (MAR)
-    # def ram_read(self, MAR):
-    #     return self.ram[MAR]
-
-
-    # #_Memory Data Register_ (MDR)
-    # def ram_write(self, MAR, MDR):
-    #     self.ram[MAR] = MDR
-    #     return self.ram[MAR]
-
     def load(self):
         """Load a program into memory."""
-        # address = 0
+     
         # # For now, we’ve just hardcoded a program:
         # program = [
         #     # From print8.ls8
@@ -106,21 +96,7 @@ class CPU:
         print()
     def run(self):
         """Run the CPU."""
-        # while self.running:
-        # # Instruction Register - internal part of CPU that holds a value.  Special purpose part of CPU.
-        #     IR = self.ram[self.pc]
-        #     # Set the value of a register to an integer.
-        #     if IR == LDI:
-        #         operand_a = self.ram_read(self.pc +1)
-        #         operand_b = self.ram_read(self.pc +2)
-        #         self.reg[operand_a] = operand_b
-        #         self.pc +=3
-        #     elif IR == HLT:
-        #         return False
-        #     elif IR == PRN:
-        #         operand_a = self.ram[self.pc +1]
-        #         print(self.reg[operand_a])
-        #         self.pc += 2
+        
         while not self.halted:
             instruction_to_execute = self.ram_read(self.pc)
             operand_a = self.ram_read(self.pc + 1)
