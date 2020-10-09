@@ -119,7 +119,7 @@ class CPU:
             self.pc += 2
 
         elif instruction == ADD:
-            self.alu("ADD", reg_a, reg_b)
+            self.alu("ADD", operand_a, operand_b)
             self.pc += 3
 
         elif instruction == MUL:
@@ -142,7 +142,7 @@ class CPU:
                 self.pc += 2
 
         elif instruction == POP:
-                # get the tack pointer
+                # get the stack pointer
                 sp = self.reg[7]
                 # get register number to put value in
                 # reg_a = self.ram[self.pc+1]
@@ -156,7 +156,28 @@ class CPU:
                 self.reg[7] += 1
                 # increment program counter
                 self.pc += 2
-
+        elif instruction == CALL:
+                # get register number
+                # reg_a = self.ram[self.pc + 1]
+                # get the address to jump to, from the register
+                address = self.reg[operand_a]
+                # push command right after CALL onto the stack
+                return_address = self.pc + 2
+                # decrement stack pointer
+                self.reg[7] -= 1
+                sp = self.reg[7]
+                # put return_address on the stack
+                self.ram[sp] = return_address
+                # then look at register, jump to that address
+                self.pc = address
+            
+        elif instruction == RET:
+                # pop the return address off the stack
+                sp = self.reg[7]
+                return_address = self.ram[sp]
+                self.reg[7] += 1
+                # go to return address: set the pc to return address
+                self.pc = return_address
           
         else:
             print("ehh idk what to do")
