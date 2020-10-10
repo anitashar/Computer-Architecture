@@ -15,6 +15,10 @@ PUSH =0b01000101   # Push in stack
 POP = 0b01000110    # Pop from stack
 CALL =0b01010000
 RET = 0b00010001
+CMP = 0b10100111
+JMP = 0b01010100
+JEQ = 0b01010101
+JNE = 0b01010110
 
 class CPU:
     """Main CPU class."""
@@ -24,8 +28,8 @@ class CPU:
         self.ram = [0] * 256
         self.reg = [0] * 8
         self.reg[7] = 0xF4
-        self.running = True
         self.halted = False
+        self.FL = 0b00000000
 
     def ram_read(self, address):
         return self.ram[address]
@@ -80,6 +84,15 @@ class CPU:
             self.reg[reg_a] += self.reg[reg_b]
         elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
+
+        elif op == "CMP":
+            if self.reg[reg_a] < self.reg[reg_b]:
+                self.FL = 0b00000100
+            if self.reg[reg_a] > self.reg[reg_b]:
+                self.FL = 0b00000010
+            if self.reg[reg_a] == self.reg[reg_b]:
+                self.FL = 0b00000001
+        
         else:
             raise Exception("Unsupported ALU operation")
     def trace(self):
@@ -178,6 +191,29 @@ class CPU:
                 self.reg[7] += 1
                 # go to return address: set the pc to return address
                 self.pc = return_address
+
+        elif instruction == CMP:
+            self.alu("CMP", operand_a, operand_b)
+            self.pc += 3
+
+        elif instruction == JMP:
+            #get the address from register
+            register_number = self.ram_read(self.pc + 1)
+            #set pc to address
+            self.pc = self.reg[register_number]
+        elif instruction == JEQ:
+            if self.FL == 0b00000001:
+                register_number = self.ram_read(self.pc +1)
+                self.pc = self.reg[register_number]
+            else:
+                self.pc += 2
+
+        elif instruction == JNE:
+            if self.FL != 0b00000001:
+                register_number = self.ram_read(self.pc +1)
+                self.pc = self.reg[register_number]
+            else:
+                self.pc += 2
           
         else:
             print("ehh idk what to do")
